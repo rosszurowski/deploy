@@ -1,0 +1,84 @@
+#!/usr/bin/env ruby
+
+require 'deploy'
+require 'fileutils'
+
+def help
+	%Q(
+  Usage: deploy [COMMAND] [ENVIRONMENTS] [OPTIONS]
+
+  Commands:
+  	install             Configure directory for deployment
+  	help                Prints this help document
+  	version             Prints the siteleaf gem version
+  	
+  Environments:
+  	<env>			   Deploys listed environments
+
+  Options:
+  	-h, --help          Prints this help document
+  	-v, --version       Prints the deploy gem version
+
+  See https://github.com/rosszurowski/deploy-gem for additional documentation.
+  )
+end
+
+# TODO: Allow creation of environments from install command, for example
+# `deploy install live dev` would create a file with live and dev
+# configurations to be filled in
+def install
+	
+	if File.exist?(Deploy::CONFIG_PATH)
+		
+		puts "Deployment configuration file `#{Deploy::CONFIG_PATH}` already exists."
+		
+		# Use a Y/n prompt to see if things should be overwritten
+		prompt = "Would you like to overwrite it?"
+		answer = ''
+		default = 'y'
+		until %w[y n].include? answer
+			puts prompt + ' [Y/n]:'
+			answer = STDIN.gets.chomp.downcase
+			answer = default if answer.length == 0
+		end
+		
+		if(answer == 'y')
+			File.open(Deploy::CONFIG_PATH, 'w+') do |file|
+				file.puts 'server_name:','  host: ""','  user: ""','  pass: ""','  path:','    local: "/"','    remote: "/public_html/"'
+			end
+			puts "Deployment configuration file created. Fill in `#{Deploy::CONFIG_PATH}` with server details before deploying"
+		else
+			puts "No congifuration file has been installed."
+		end
+		
+	else
+		
+		File.open(Deploy::CONFIG_PATH, 'w+') do |file|
+			file.puts 'server_name:','  host: ""','  user: ""','  pass: ""','  path:','    local: "/"','    remote: "/public_html/"'
+		end
+		puts "Deployment configuration file created. Fill in `#{Deploy::CONFIG_PATH}` with server details before deploying"
+		
+	end
+	
+end
+
+# See if they're running a command
+case ARGV[0]
+when '-v', '--version', 'version'
+	puts "Deploy v" + Deploy::VERSION
+	exit
+when '-h', '--help', 'help'
+	puts help
+	exit
+when 'install', 'setup'
+	install
+	exit
+end
+
+if File.exist?(Deploy::CONFIG_PATH)
+	Deploy.new Deploy::CONFIG_PATH
+	Deploy.deploy ARGV
+else
+	puts "No config file found, run `deploy install` to create one"
+	exit
+end
