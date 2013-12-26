@@ -15,9 +15,9 @@ Gem::Specification.new do |s|
   s.authors       = ["Ross Zurowski"]
   s.email         = 'ross@rosszurowski.com'
   s.homepage      = 'https://github.com/rosszurowski/deploy'
-  s.license       = 'WTFPL'
+  s.license       = 'MIT'
 
-  s.require_paths = ["lib"]
+  s.require_paths = ['lib']
   
   s.add_development_dependency "bundler", "~> 1.3"
   s.add_development_dependency "rake"
