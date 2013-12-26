@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.authors       = ["Ross Zurowski"]
   s.email         = 'ross@rosszurowski.com'
-  s.homepage      = 'http://rubygems.org/gems/rsync-deploy'
+  s.homepage      = 'https://github.com/rosszurowski/deploy'
   s.license       = 'WTFPL'
 
   s.require_paths = ["lib"]
