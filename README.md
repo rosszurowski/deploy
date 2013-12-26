@@ -85,49 +85,50 @@ server_name:
 
 ```
 
-#### Required settings
+### Required settings
 
-### host
 
-Type: `String`
-Default: `none`
-
-#### Optional settings
-
-### user
+#### host
 
 Type: `String`
 Default: `none`
 
-### sync
+### Optional settings
+
+#### user
+
+Type: `String`
+Default: `none`
+
+#### sync
 
 Type: `Boolean`
 Default: `true`
 
 Whether or not to delete files on the server that aren't present locally.
 
-### verbose
+#### verbose
 
 Type: `Boolean`
 Default: `false`
 
 Whether or not to run the uploads verbosely.
 
-### path.local
+#### path.local
 
 Type: `String`
 Default: `none`
 
 The local folder that you want to upload to the server. If you don't set anything, the entire folder of your project will be uploaded.
 
-### path.remote
+#### path.remote
 
 Type: `String`
 Default: `none`
 
 The remote folder where your files will be uploaded. If you don't set anything, your files will be uploaded to the user root of your server. Setting this is **highly recommended!**
 
-### exclude
+#### exclude
 
 Type: `Array`
 Default: `none`
