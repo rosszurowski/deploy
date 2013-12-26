@@ -16,7 +16,7 @@ module Deploy
 			@options = { :verbose => false, :sync => true }
 
 			@config[:host] = hash['host']
-			@config[:user] = hash['user']
+			@config[:user] = hash['user'] unless hash['user'].nil?
 			@config[:pass] = hash['pass'] unless hash['pass'].nil?
 
 			@config[:local] = hash['path']['local'].gsub(/\s+/, "")
@@ -52,20 +52,23 @@ module Deploy
 				@config[:excludes].each do |ex|
 					tmp_exclude.puts ex
 				end
+				# Don't upload the deploy configuration file
+				tmp_exclude.puts Deploy::CONFIG_PATH 
 				tmp_exclude.close
 			end
 
-			rsync_cmd = 'rsync -a'																												# Always keep permissions
-			rsync_cmd += 'v' if @options[:verbose]																					# Verbose if requested
-			rsync_cmd += 'z'																															# Always zip files
+			rsync_cmd = 'rsync -a'																													# Always keep permissions
+			rsync_cmd += 'v' if @options[:verbose]																						# Verbose if requested
+			rsync_cmd += 'z'																																# Always zip files
 
-			rsync_cmd += ' --progress'																										# Always show progress
-			rsync_cmd += ' --force --delete' unless !@options[:sync]												# Sync unless explicitly requested
-			rsync_cmd += " --exclude-from=#{tmp_exclude.path}" if @config[:excludes]					# Include exclude file if it exists
+			rsync_cmd += ' --progress'																											# Always show progress
+			rsync_cmd += ' --force --delete' unless @options[:sync] == false									# Sync unless explicitly requested
+			rsync_cmd += " --exclude-from=#{tmp_exclude.path}" unless @config[:excludes].nil?	# Include exclude file if it exists
 			rsync_cmd += " -e \"ssh -p22\""
 
-			rsync_cmd += " " + `pwd`.gsub(/\s+/, "") + "#{@config[:local]}"									# The local path from the current directory
-			rsync_cmd += " #{@config[:user]}@#{@config[:host]}:"
+			rsync_cmd += " " + `pwd`.gsub(/\s+/, "") + "#{@config[:local]}"										# The local path from the current directory
+			rsync_cmd += " #{@config[:user]}@" unless @config[:user].nil?											# Only add user if 
+			rsync_cmd += "#{@config[:host]}:"
 			rsync_cmd += "~#{@config[:remote]}"
 
 			# Run the command
@@ -81,9 +84,8 @@ module Deploy
 
 		def validate
 
-			# Fail without hostname/username (password is optional)
+			# Fail without hostname (user/password are optional)
 			raise "Error: no hostname set for #{@name}" if @config[:host].empty?
-			raise "Error: no user set for #{@name}" if @config[:user].empty?
 
 			# Fail if local/remote paths not set (because they should be in initialize
 			# even if they're not set in the yml config file.
