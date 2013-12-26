@@ -86,7 +86,7 @@ server_name:
 ```
 
 ### Required settings
-
+----
 
 #### host
 
@@ -94,6 +94,7 @@ Type: `String`
 Default: `none`
 
 ### Optional settings
+----
 
 #### user
 
