@@ -76,8 +76,8 @@ server_name:
   sync: true
   verbose: false
   path:
-    local:
-    remote:
+    local: "/"
+    remote: "www/
   excludes:
     - ".DS_Store"
     - "resources/"
@@ -93,10 +93,14 @@ Type: `String`
 Default: `none`
 Required: `Yes`
 
+The server that the files should be deployed to.
+
 #### user
 
 Type: `String`
 Default: `none`
+
+The username to login to the server. If no username is set, your computer account username will be used. Passwords will need to be typed in manually, however, SSH keys will be used if available.
 
 #### sync
 
