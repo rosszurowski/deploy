@@ -85,16 +85,13 @@ server_name:
 
 ```
 
-### Required settings
-----
+Below is a list of all available configuration options.
 
 #### host
 
 Type: `String`
 Default: `none`
-
-### Optional settings
-----
+Required: `Yes`
 
 #### user
 
@@ -165,7 +162,7 @@ production:
 You can deploy them by setting the environment(s) that you want to upload to:
 
 ```
-deploy production
+deploy staging production
 ```
 
 If you don't specify an environment, it's assumed that the first environment in `deploy.yml` should be used. So, with the above configuration, running `deploy` would upload to `staging` by default.
