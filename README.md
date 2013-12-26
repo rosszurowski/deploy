@@ -87,53 +87,53 @@ server_name:
 
 Below is a list of all available configuration options.
 
-#### host
+### host
 
-Type: `String`
-Default: `none`
-Required: `Yes`
+- Type: `String`
+- Default: `none`
+- Required: `Yes`
 
 The server that the files should be deployed to.
 
-#### user
+### user
 
-Type: `String`
-Default: `none`
+- Type: `String`
+- Default: `none`
 
 The username to login to the server. If no username is set, your computer account username will be used. Passwords will need to be typed in manually, however, SSH keys will be used if available.
 
-#### sync
+### sync
 
-Type: `Boolean`
-Default: `true`
+- Type: `Boolean`
+- Default: `true`
 
 Whether or not to delete files on the server that aren't present locally.
 
-#### verbose
+### verbose
 
-Type: `Boolean`
-Default: `false`
+- Type: `Boolean`
+- Default: `false`
 
 Whether or not to run the uploads verbosely.
 
-#### path.local
+### path.local
 
-Type: `String`
-Default: `none`
+- Type: `String`
+- Default: `none`
 
 The local folder that you want to upload to the server. If you don't set anything, the entire folder of your project will be uploaded.
 
-#### path.remote
+### path.remote
 
-Type: `String`
-Default: `none`
+- Type: `String`
+- Default: `none`
 
 The remote folder where your files will be uploaded. If you don't set anything, your files will be uploaded to the user root of your server. Setting this is **highly recommended!**
 
-#### exclude
+### exclude
 
-Type: `Array`
-Default: `none`
+- Type: `Array`
+- Default: `none`
 
 Exclude files that you don't want on your server. You can target files, directories and file types.
 
