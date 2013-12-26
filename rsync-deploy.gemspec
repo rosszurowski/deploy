@@ -22,4 +22,10 @@ Gem::Specification.new do |s|
   s.add_development_dependency "bundler", "~> 1.3"
   s.add_development_dependency "rake"
   
+  s.files         = `git ls-files`.split($/)
+  s.files         += Dir.glob("lib/**/*.rb")
+  s.executables   = ["deploy"]
+  s.test_files    = s.files.grep(%r{^(test|spec|features)/})
+  s.require_paths = ["lib"]
+  
 end

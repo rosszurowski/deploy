@@ -1,6 +1,7 @@
 libdir = File.dirname(__FILE__)
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
+require 'yaml'
 require 'deploy/version'
 require 'deploy/environment'
 
@@ -9,13 +10,13 @@ module Deploy
   # TODO: Make this adjustable from the command line
   CONFIG_PATH = "deploy.yml"
 
-  class Deploy
+  class Deployment
 
     attr_reader :environments
 
-    def initialize(config_path)
+    def initialize()
 
-      @config = YAML::load(File.open(config_path))
+      @config = YAML::load(File.open(CONFIG_PATH))
       @environments = Array.new
 
       @config.each do |env|
@@ -30,7 +31,7 @@ module Deploy
       # the configuration file, otherwise loop through and deploy each one
       if args.size == 0
         
-        @environments[0].deploy
+        @environments.first.deploy
         
       else
         

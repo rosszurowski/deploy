@@ -60,13 +60,15 @@ module Deploy
 
 			rsync_cmd += ' --progress'																										# Always show progress
 			rsync_cmd += ' --force --delete' unless !@options[:sync]												# Sync unless explicitly requested
-			rsync_cmd += " --exclude-from=#{@config['excludes']}" if @config[:excludes]			# Include exclude file if it exists
+			rsync_cmd += " --exclude-from=#{tmp_exclude.path}" if @config[:excludes]					# Include exclude file if it exists
 			rsync_cmd += " -e \"ssh -p22\""
 
-			rsync_cmd += " .#{@config[:local]}"
-			rsync_cmd += " #{@config[:user]}@#{@config[:host]}:~#{@config[:remote]}"
+			rsync_cmd += " " + `pwd`.gsub(/\s+/, "") + "#{@config[:local]}"									# The local path from the current directory
+			rsync_cmd += " #{@config[:user]}@#{@config[:host]}:"
+			rsync_cmd += "~#{@config[:remote]}"
 
 			# Run the command
+			puts rsync_cmd
 			system(rsync_cmd)
 
 			# Remove excludes file if needed

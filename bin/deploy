@@ -14,12 +14,14 @@ def help
   	
   Environments:
   	<env>			   Deploys listed environments
+  	
+  	If no commands, environments, or options are given, the first environment in the config file will be deployed.
 
   Options:
   	-h, --help          Prints this help document
   	-v, --version       Prints the deploy gem version
 
-  See https://github.com/rosszurowski/deploy-gem for additional documentation.
+  See https://github.com/rosszurowski/deploy for additional documentation.
   )
 end
 
@@ -37,7 +39,7 @@ def install
 		answer = ''
 		default = 'y'
 		until %w[y n].include? answer
-			puts prompt + ' [Y/n]:'
+			print prompt + ' [Y/n]:'
 			answer = STDIN.gets.chomp.downcase
 			answer = default if answer.length == 0
 		end
@@ -46,7 +48,7 @@ def install
 			File.open(Deploy::CONFIG_PATH, 'w+') do |file|
 				file.puts 'server_name:','  host: ""','  user: ""','  pass: ""','  path:','    local: "/"','    remote: "/public_html/"'
 			end
-			puts "Deployment configuration file created. Fill in `#{Deploy::CONFIG_PATH}` with server details before deploying"
+			puts "Configuration file created. Fill in `#{Deploy::CONFIG_PATH}` with server details before deploying."
 		else
 			puts "No congifuration file has been installed."
 		end
@@ -56,28 +58,30 @@ def install
 		File.open(Deploy::CONFIG_PATH, 'w+') do |file|
 			file.puts 'server_name:','  host: ""','  user: ""','  pass: ""','  path:','    local: "/"','    remote: "/public_html/"'
 		end
-		puts "Deployment configuration file created. Fill in `#{Deploy::CONFIG_PATH}` with server details before deploying"
+		puts "Deployment configuration file created. Fill in `#{Deploy::CONFIG_PATH}` with server details before deploying."
 		
 	end
 	
 end
 
 # See if they're running a command
-case ARGV[0]
-when '-v', '--version', 'version'
-	puts "Deploy v" + Deploy::VERSION
-	exit
-when '-h', '--help', 'help'
-	puts help
-	exit
-when 'install', 'setup'
-	install
-	exit
+if ARGV.size > 0
+	case ARGV[0]
+	when '-v', '--version', 'version'
+		puts "Deploy v" + Deploy::VERSION
+		exit
+	when '-h', '--help', 'help'
+		puts help
+		exit
+	when 'install', 'setup'
+		install
+		exit
+	end
 end
 
 if File.exist?(Deploy::CONFIG_PATH)
-	Deploy.new Deploy::CONFIG_PATH
-	Deploy.deploy ARGV
+	deploy = Deploy::Deployment.new
+	deploy.go ARGV
 else
 	puts "No config file found, run `deploy install` to create one"
 	exit
