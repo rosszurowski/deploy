@@ -139,7 +139,7 @@ Exclude files that you don't want on your server. You can target files, director
 
 Individual files: `exclude: ["README.md", "package.json", "path/to/file.js"]`  
 Directories: `exclude: ["resources/", "test/", "path/to/dir/"]`  
-File types: `excludes: ["*.yml", "*.json", "path/to/*.txt"]`
+File types: `exclude: ["*.yml", "*.json", "path/to/*.txt"]`
 
 ## Deploying to multiple servers/locations
 
