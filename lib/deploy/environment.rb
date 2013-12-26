@@ -16,8 +16,8 @@ module Deploy
 			@options = { :verbose => false, :sync => true }
 
 			@config[:host] = hash['host']
-			@config[:user] = hash['user'] unless hash['user'].nil?
-			@config[:pass] = hash['pass'] unless hash['pass'].nil?
+			@config[:user] = hash['user'] || ''
+			@config[:pass] = hash['pass'] || ''
 
 			@config[:local] = hash['path']['local'].gsub(/\s+/, "")
 			@config[:remote] = hash['path']['remote'].gsub(/\s+/, "")
@@ -57,19 +57,21 @@ module Deploy
 				tmp_exclude.close
 			end
 
-			rsync_cmd = 'rsync -a'																													# Always keep permissions
-			rsync_cmd += 'v' if @options[:verbose]																						# Verbose if requested
-			rsync_cmd += 'z'																																# Always zip files
+			rsync_cmd = 'rsync -a'																														# Always keep permissions
+			rsync_cmd += 'v' if @options[:verbose]																							# Verbose if requested
+			rsync_cmd += 'z'																																	# Always zip files
 
-			rsync_cmd += ' --progress'																											# Always show progress
-			rsync_cmd += ' --force --delete' unless @options[:sync] == false									# Sync unless explicitly requested
-			rsync_cmd += " --exclude-from=#{tmp_exclude.path}" unless @config[:excludes].nil?	# Include exclude file if it exists
+			rsync_cmd += ' --progress'																												# Always show progress
+			rsync_cmd += ' --force --delete' unless @options[:sync] == false										# Sync unless explicitly requested
+			rsync_cmd += " --exclude-from=#{tmp_exclude.path}" unless @config[:excludes].empty?	# Include exclude file if it exists
 			rsync_cmd += " -e \"ssh -p22\""
 
-			rsync_cmd += " " + `pwd`.gsub(/\s+/, "") + "#{@config[:local]}"										# The local path from the current directory
-			rsync_cmd += " #{@config[:user]}@" unless @config[:user].nil?											# Only add user if 
-			rsync_cmd += "#{@config[:host]}:"
-			rsync_cmd += "~#{@config[:remote]}"
+			rsync_cmd += " " + `pwd`.gsub(/\s+/, "") + "#{@config[:local]}"											# The local path from the current directory
+			
+			rsync_cmd += " "																																	# Adding a space here means we don't need an if/else statement
+			rsync_cmd += "#{@config[:user]}@" unless @config[:user].empty?											# Only add user if not empty
+			rsync_cmd += "#{@config[:host]}:"																									# Add host
+			rsync_cmd += "~#{@config[:remote]}"																								# Add remote
 
 			# Run the command
 			# puts rsync_cmd
