@@ -6,6 +6,7 @@ require 'tempfile'
 module Deploy
 	class Environment
 
+		attr_reader :name
 		attr_accessor :config, :options
 
 		def initialize(name, hash)
@@ -68,7 +69,7 @@ module Deploy
 			rsync_cmd += "~#{@config[:remote]}"
 
 			# Run the command
-			puts rsync_cmd
+			# puts rsync_cmd
 			system(rsync_cmd)
 
 			# Remove excludes file if needed

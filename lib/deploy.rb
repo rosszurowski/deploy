@@ -40,6 +40,7 @@ module Deploy
         args.each do |arg_env|
           
           curr_env = @environments.find { |e| e.name == arg_env }
+          
           if curr_env.nil?
             puts "No environment found for #{arg_env}, add it to `#{Deploy::CONFIG_PATH}`"
           else
