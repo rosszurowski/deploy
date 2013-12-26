@@ -1,29 +1,70 @@
-# Rsync::Deploy
+**_Note: This tool is still in development and likely will not work in many cases._**
 
-TODO: Write a gem description
+# Deploy
 
-## Installation
+**Deploy is an rsync deployment tool built using Ruby**  
+Essentially acts as a wrapper for the rsync utility, providing a simple YAML based configuration file.
 
-Add this line to your application's Gemfile:
 
-    gem 'rsync-deploy'
+## Install
 
-And then execute:
+To install just run:
 
-    $ bundle
+```
+gem install rsync-deploy
+```
 
-Or install it yourself as:
 
-    $ gem install rsync-deploy
+## Commands
 
-## Usage
+#### deploy install
 
-TODO: Write usage instructions here
+Will create an template `deploy.yml` file in the current directory.
 
-## Contributing
+#### deploy [env...]
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+Will deploy to the environment(s) listed in the command. This can be used to deploy to a single server, like this:
+
+```
+deploy production
+```
+
+Or to multiple servers, like this:
+
+```
+deploy dev staging production
+```
+
+All environments called (eg. **dev**, **staging**, and **production**) are expected to be listed in your `deploy.yml` file.
+
+# Basic example
+
+Set up your server in the `deploy.yml` file
+
+```
+production:
+    host: "server.com"
+    user: "username"
+    path:
+        local: "deploy/"
+        remote: "public_html/"
+```
+
+And then use the following command to deploy:
+
+```
+deploy production
+```
+
+# Mentions
+
+Deploy is almost identical to [DPLOY](https://github.com/LeanMeanFightingMachine/dploy), which was in turn inspired by [dandelion](https://github.com/scttnlsn/dandelion). However, Deploy separates version control from deployment, which helps avoid messy version control history with commits like _bug fix_, _typo_, and so on.
+
+
+## Uninstall
+
+To uninstall Deploy, download the [project files](https://github.com/rosszurowski/deploy/archive/master.zip), navigate to the unzipped directory, and run:
+
+```
+gem uninstall rsync-deploy
+```
