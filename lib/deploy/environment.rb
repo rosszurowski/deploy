@@ -35,8 +35,8 @@ module Deploy
 			@config[:excludes] = hash['exclude'] || Array.new
 
 			@options[:reverse] = false
-			@options[:verbose] = defined?(hash['verbose']) ? hash['verbose'] : false
-			@options[:sync] = defined?(hash['sync']) ? hash['sync'] : true
+			@options[:verbose] = hash['verbose'].to_s.empty? ? false : hash['verbose']
+			@options[:sync] = hash['sync'].to_s.empty? ? true : hash['sync']
 
 			validate
 

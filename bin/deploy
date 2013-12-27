@@ -93,12 +93,13 @@ end
 def list
 	if File.exist?(Deploy::CONFIG_PATH)
 		deploy = Deploy::Deployment.new
-		longest_env = (deploy.environments.sort { |a, b| a.name.length <=> b.name.length }).last
 		
+		# List out environments
+		longest_env = (deploy.environments.sort { |a, b| a.name.length <=> b.name.length }).last
 		deploy.environments.each.with_index(1) do |env, i|
-			# puts "* \e[91m#{env.name}\e[0m %-#{longest_env.name.length}s (#{env.config[:user]}@#{env.config[:host]})"
 			printf "* \e[91m%-#{longest_env.name.length + 3}s\e[0m %s\n", "#{env.name}", "(#{env.config[:user]}@#{env.config[:host]})"
 		end
+		
 	else
 		puts "No config file found, run `deploy install` to create one"
 		exit
