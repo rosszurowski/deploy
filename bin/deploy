@@ -3,41 +3,44 @@
 require 'deploy'
 require 'fileutils'
 
-# TODO: Create `-r`, `--rev`, `--reverse`, `rev`, `reverse` command to download
-# from the server instead of upload
+# TODO: Allow creation of environments from install command, for example
+# `deploy install live dev` would create a file with live and dev
+# configurations to be filled in
+
 # TODO: Allow pre/post-deploy tasks to be run on a per-environment basis for 
 # both local and remote servers. That could help some people, but not really
 # needed for a while yet.
 
 def help
 	%Q(
-  Usage: deploy [COMMAND] [ENVIRONMENTS] [OPTIONS]
+  Usage: deploy [COMMAND] [OPTIONS] [ENVIRONMENTS]
 
   Commands:
-  	install             Configure directory for deployment
-  	config NAME         Changes the deployment config file name
-  	help                Prints this help document
-  	version             Prints the siteleaf gem version
+  
+  	[env...]			     Deploys listed environments
+  	reverse [env...]      Downloads listed environments \(aliased as `r` or `rev`\) 
+  	download [env...]     Downloads listed environments \(aliased as `d` or `down`\)
+  	
+  	install               Configure directory for deployment
+  	config FILENAME       Changes the deployment config file name
+  	help                  Prints this help document
+  	version               Prints the siteleaf gem version
   	
   Environments:
-  	<env>               Deploys listed environments
+  	[env...]              Deploys listed environments
   	
   	If no commands, environments, or options are given,
   	the first environment in the config file will be deployed.
 
   Options:
-  	-h, --help          Prints this help document
-  	-v, --version       Prints the deploy gem version
-  	-r, --reverse       Downloads files from server to directory
-  	-d, --download      Downloads files from server to directory
+  	-h, --help            Prints this help document
+  	-v, --version         Prints the deploy gem version
 
   See https://github.com/rosszurowski/deploy for additional documentation.
   )
 end
 
-# TODO: Allow creation of environments from install command, for example
-# `deploy install live dev` would create a file with live and dev
-# configurations to be filled in
+
 def install
 	
 	if File.exist?(Deploy::CONFIG_PATH)
@@ -74,11 +77,24 @@ def install
 	
 end
 
+def set_config(new_path)
+	unless ARGV[1].empty?
+		File.open(Deploy::GEM_SETTINGS_PATH, 'w+') do |file|
+			# Remove illegal characters and add to file
+			file.puts 'config_path: ' + new_path
+		end
+		puts "Configuration file renamed to `#{new_path}`"
+	else
+		puts "Please provide a name for configuration files. See `deploy help` for more details."
+	end
+end
+
 def go(rev=false)
 	if File.exist?(Deploy::CONFIG_PATH)
 		deploy = Deploy::Deployment.new
 		deploy.reverse = rev
-		deploy.go ARGV
+		# Pass the arguments to the deploy, but remove the reverse command
+		deploy.go ARGV.reject { |cmd| cmd =~ /\b((?:r)|(?:rev)|(?:reverse)|(?:d)|(?:down)|(?:download))\b/i }
 	else
 		puts "No config file found, run `deploy install` to create one"
 		exit
@@ -96,22 +112,15 @@ when '-h', '--help', 'help'
 when 'install', 'setup'
 	install
 	exit
-when '-r', '--rev', '--reverse', 'rev', 'reverse', '-d', '--down', '--download', 'down', 'download'
-	
+when 'r', 'rev', 'reverse',
+	 'd', 'down', 'download'
 	# Run the deploy in reverse
 	go(true)
 	exit
-	
+# when 'list'
+# 	exit
 when 'config'
-	unless ARGV[1].empty?
-		File.open(Deploy::GEM_SETTINGS_PATH, 'w+') do |file|
-			# Remove illegal characters and add to file
-			file.puts 'config_path: ' + ARGV[1].gsub(/[^\w\.]/, '_')
-		end
-		puts "Configuration file renamed to `#{ARGV[1].gsub(/[^\w\.]/, '_')}`"
-	else
-		puts "Please provide a name for configuration files. See `deploy help` for more details."
-	end
+	set_config ARGV[1].gsub(/[^\w\.]/, '_')
 	exit
 end
 

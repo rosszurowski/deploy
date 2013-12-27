@@ -58,9 +58,20 @@ Or to multiple servers, like this:
 deploy dev staging production
 ```
 
+#### deploy download [env...]
+
+Will download from the environment(s) listed. This works in reverse, so files from `path.remote` will go into `path.local`
+
+This command is also aliased as `down` and `d`, so it can be run like:
+
+```
+deploy down staging
+```
+
 #### deploy config NAME
 
 Will change the name of deployment configuration files. By default they are named `deploy.yml`, but this can be changed to names such as `.deploy` which makes them hidden files. Keep in mind that **this is a global setting** and will be applied to all deployments.
+
 
 #### deploy help
 
@@ -126,7 +137,8 @@ The password to login to the server. If SSH keys aren't available, then the `pas
 - Type: `String`
 - Default: `none`
 
-The path to an alternative SSH key. This only needs to be set if your key isn't one of the following:
+The path to an alternative SSH key. This only needs to be set if your key **isn't** one of the following:
+
 ```
 ~/.ssh/id_rsa
 ~/.ssh/id_dsa

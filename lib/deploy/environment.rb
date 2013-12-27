@@ -34,9 +34,9 @@ module Deploy
 
 			@config[:excludes] = hash['exclude'] || Array.new
 
-			
-			@options[:verbose] = hash['verbose'] unless hash['verbose'].nil?
-			@options[:sync] = hash['sync'] unless hash['sync'].nil?
+			@options[:reverse] = false
+			@options[:verbose] = defined?(hash['verbose']) ? hash['verbose'] : false
+			@options[:sync] = defined?(hash['sync']) ? hash['sync'] : true
 
 			validate
 
@@ -67,37 +67,38 @@ module Deploy
 				tmp_pass.close
 			end
 
-			rsync_cmd = 'rsync -a'																														# Always keep permissions
-			rsync_cmd += 'v' if @options[:verbose]																							# Verbose if requested
-			rsync_cmd += 'z'																																	# Always zip files
+			rsync_cmd = 'rsync -a'																																# Always keep permissions
+			rsync_cmd += 'v' if @options[:verbose]																									# Verbose if requested
+			rsync_cmd += 'z'																																			# Always zip files
 
-			rsync_cmd += ' --progress'																												# Always show progress
-			rsync_cmd += ' --force --delete' unless @options[:sync] == false										# Sync unless explicitly requested
-			rsync_cmd += " --exclude-from=#{tmp_exclude.path}" unless @config[:excludes].empty?	# Include exclude file if it exists
-			rsync_cmd += " --password-file=#{tmp_pass.path}" unless @config[:pass].empty?				# Include password file if it exists
+			rsync_cmd += ' --progress'																														# Always show progress
+			
+			rsync_cmd += ' --force --delete' if (@options[:sync] && !@options[:reverse])   					# Sync unless explicitly requested or downloading
+			rsync_cmd += " --exclude-from=#{tmp_exclude.path}" unless @config[:excludes].empty?			# Include exclude file if it exists
+			rsync_cmd += " --password-file=#{tmp_pass.path}" unless @config[:pass].empty?						# Include password file if it exists
 			rsync_cmd += " -e \"ssh "
 			
 			if(@config[:pass].empty? and @config[:private_key].empty?)
-				rsync_cmd += " -i #{@config[:private_key]} " 																		# Include a custom private key if requested
+				rsync_cmd += " -i #{@config[:private_key]} " 																				# Include a custom private key if requested
 			end
 
-			rsync_cmd += "-p#{@config[:port]}\" "																							# Choose port if specified
+			rsync_cmd += "-p#{@config[:port]}\" "																									# Choose port if specified
 
-			unless @config[:reverse]
-				rsync_cmd += `pwd`.gsub(/\s+/, "") + "#{@config[:local]} "												# The local path from the current directory
+			unless @options[:reverse]
+				rsync_cmd += `pwd`.gsub(/\s+/, "") + "#{@config[:local]} "														# The local path from the current directory
 			end
 
-			rsync_cmd += "#{@config[:user]}@" unless @config[:user].empty?											# Only add user if not empty
-			rsync_cmd += "#{@config[:host]}:"																									# Add host
-			rsync_cmd += "~#{@config[:remote]}"																								# Add remote (relative to remote user home)
+			rsync_cmd += "#{@config[:user]}@" unless @config[:user].empty?													# Only add user if not empty
+			rsync_cmd += "#{@config[:host]}:"																											# Add host
+			rsync_cmd += "~#{@config[:remote]}"																										# Add remote (relative to remote user home)
 			
-			if @config[:reverse]
-				
+			if @options[:reverse]
+				rsync_cmd += " " + `pwd`.gsub(/\s+/, "") + "#{@config[:local]}"												# Put the local path after if we're downloading
 			end
 			
 			# Run the command
-			puts rsync_cmd
-			# system(rsync_cmd)
+			# puts rsync_cmd
+			system(rsync_cmd)
 
 			# Remove excludes/pass file if needed
 			tmp_exclude.unlink unless @config[:excludes].empty?

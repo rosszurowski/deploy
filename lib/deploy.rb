@@ -30,10 +30,11 @@ module Deploy
 
     end
 
-    def go(args)
+    def go(args = [])
 
       # If there are no arguments, deploy using the first environment in
       # the configuration file, otherwise loop through and deploy each one
+      # Note: the to_a statement ensures that args is not nil
       if args.size == 0
         
         @environments.first.deploy
@@ -63,7 +64,7 @@ module Deploy
       
       @reverse = reverse
       @environments.each do |env|
-        env.config[:reverse] = reverse
+        env.options[:reverse] = reverse
       end
       
     end
