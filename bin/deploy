@@ -125,9 +125,6 @@ when '-v', '--version', 'version'
 when '-h', '--help', 'help'
 	puts help
 	exit
-when '-w'
-	puts Deploy::CONFIG_PATH
-	exit
 when 'install', 'setup'
 	install
 	exit
