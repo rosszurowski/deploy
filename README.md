@@ -23,13 +23,16 @@ This will create a `deploy.yml` file that controls how the deployment should tak
 Fill in your server details. For example:
 
 ```
-# Server
 server_name:
     host: "server.com"
     user: "user"
+    sync: true
     path:
         local: "deploy/"
         remote: "www/"
+    exclude: 
+        - ".DS_Store"
+        - "resources/"
 ```
 
 Once your `deploy.yml` is set up, simply deploy by running:
@@ -79,7 +82,7 @@ Will change the name of deployment configuration files. By default they are name
 
 #### deploy help
 
-Will output a list of all commands
+Will output a list of all commands.
 
 
 ## Config
