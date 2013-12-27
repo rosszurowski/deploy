@@ -22,6 +22,7 @@ def help
   	download [env...]     Downloads listed environments \(aliased as `d` or `down`\)
   	
   	install               Configure directory for deployment
+  	list					 Lists all configured environments
   	config FILENAME       Changes the deployment config file name
   	help                  Prints this help document
   	version               Prints the siteleaf gem version
@@ -89,6 +90,21 @@ def set_config(new_path)
 	end
 end
 
+def list
+	if File.exist?(Deploy::CONFIG_PATH)
+		deploy = Deploy::Deployment.new
+		longest_env = (deploy.environments.sort { |a, b| a.name.length <=> b.name.length }).last
+		
+		deploy.environments.each.with_index(1) do |env, i|
+			# puts "* \e[91m#{env.name}\e[0m %-#{longest_env.name.length}s (#{env.config[:user]}@#{env.config[:host]})"
+			printf "* \e[91m%-#{longest_env.name.length + 3}s\e[0m %s\n", "#{env.name}", "(#{env.config[:user]}@#{env.config[:host]})"
+		end
+	else
+		puts "No config file found, run `deploy install` to create one"
+		exit
+	end
+end
+
 def go(rev=false)
 	if File.exist?(Deploy::CONFIG_PATH)
 		deploy = Deploy::Deployment.new
@@ -117,8 +133,9 @@ when 'r', 'rev', 'reverse',
 	# Run the deploy in reverse
 	go(true)
 	exit
-# when 'list'
-# 	exit
+when 'list'
+	list
+	exit
 when 'config'
 	set_config ARGV[1].gsub(/[^\w\.]/, '_')
 	exit

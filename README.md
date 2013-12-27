@@ -68,6 +68,10 @@ This command is also aliased as `down` and `d`, so it can be run like:
 deploy down staging
 ```
 
+#### deploy list
+
+Will list all configured environments.
+
 #### deploy config NAME
 
 Will change the name of deployment configuration files. By default they are named `deploy.yml`, but this can be changed to names such as `.deploy` which makes them hidden files. Keep in mind that **this is a global setting** and will be applied to all deployments.
