@@ -6,9 +6,10 @@ require 'deploy/version'
 require 'deploy/environment'
 
 module Deploy
-
-  # TODO: Make this adjustable from the command line
-  CONFIG_PATH = "deploy.yml"
+  
+  # Config path is loaded in from a config.yml stored in the gem
+  GEM_SETTINGS_PATH = File.dirname(__FILE__) + '/config.yml'
+  CONFIG_PATH = YAML::load(File.open(GEM_SETTINGS_PATH))['config_path']
 
   class Deployment
 

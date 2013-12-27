@@ -15,6 +15,7 @@ def help
 
   Commands:
   	install             Configure directory for deployment
+  	config NAME         Changes the deployment config file name
   	help                Prints this help document
   	version             Prints the siteleaf gem version
   	
@@ -82,6 +83,17 @@ if ARGV.size > 0
 		exit
 	when 'install', 'setup'
 		install
+		exit
+	when 'config'
+		unless ARGV[1].empty?
+			File.open(Deploy::GEM_SETTINGS_PATH, 'w+') do |file|
+				# Remove illegal characters and add to file
+				file.puts 'config_path: ' + ARGV[1].gsub(/[^\w\.]/, '_')
+			end
+			puts "Configuration file renamed to `#{ARGV[1].gsub(/[^\w\.]/, '_')}`"
+		else
+			puts "Please provide a name for configuration files. See `deploy help` for more details."
+		end
 		exit
 	end
 end

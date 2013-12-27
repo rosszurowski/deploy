@@ -88,11 +88,11 @@ module Deploy
 			rsync_cmd += " "																																	# Adding a space here means we don't need an if/else statement
 			rsync_cmd += "#{@config[:user]}@" unless @config[:user].empty?											# Only add user if not empty
 			rsync_cmd += "#{@config[:host]}:"																									# Add host
-			rsync_cmd += "~#{@config[:remote]}"																								# Add remote
+			rsync_cmd += "~#{@config[:remote]}"																								# Add remote (relative to remote user home)
 
 			# Run the command
-			# puts rsync_cmd
-			system(rsync_cmd)
+			puts rsync_cmd
+			# system(rsync_cmd)
 
 			# Remove excludes/pass file if needed
 			tmp_exclude.unlink unless @config[:excludes].empty?
