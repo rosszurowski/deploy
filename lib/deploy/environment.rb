@@ -73,7 +73,9 @@ module Deploy
 
 			rsync_cmd += ' --progress'																														# Always show progress
 			
-			rsync_cmd += ' --force --delete' if (@options[:sync] && !@options[:reverse])   					# Sync unless explicitly requested or downloading
+			if (@options[:sync] && !@options[:reverse])
+				rsync_cmd += ' --force --delete --delete-excluded'    																# Sync unless explicitly requested or downloading
+			end
 			rsync_cmd += " --exclude-from=#{tmp_exclude.path}" unless @config[:excludes].empty?			# Include exclude file if it exists
 			rsync_cmd += " --password-file=#{tmp_pass.path}" unless @config[:pass].empty?						# Include password file if it exists
 			rsync_cmd += " -e \"ssh "
