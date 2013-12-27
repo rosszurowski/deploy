@@ -220,6 +220,23 @@ deploy staging production
 
 If you don't specify an environment, it's assumed that the first environment in `deploy.yml` should be used. So, with the above configuration, running `deploy` would upload to `staging` by default.
 
+## Autocompletion
+
+To enable tab-completion based for commands and the current directory's environments, put in your `~/.bash_profile` the following code:
+
+```
+# Add tab completion for `deploy` configurations in current directory
+_dply()
+{
+  local cur=${COMP_WORDS[COMP_CWORD]}
+  local file=$(cat $(ruby -e "puts Gem::Specification.find_by_name('rsync-deploy').gem_dir + '/lib/config.yml'") | awk '{print $2}')
+  if [ -f $file ]; then
+    ENVS=$(ls $PWD | grep ":$" $file | sed '/^  /d' | tr -d ':')
+  fi
+  COMPREPLY=($(compgen -W "${ENVS} install config list help version" -- $cur))
+}
+complete -o "default" -F _dply deploy
+```
 
 ## Mentions
 
