@@ -63,7 +63,7 @@ deploy dev staging production
 
 #### deploy download [env...]
 
-Will download from the environment(s) listed. This works in reverse, so files from `path.remote` will go into `path.local`
+Will download from the environment(s) listed. This works in reverse, so files from `path.remote` will go into `path.local`. This will never delete files that aren't on the server, but will likely overwrite your local copies, so be careful.
 
 This command is also aliased as `down` and `d`, so it can be run like:
 
