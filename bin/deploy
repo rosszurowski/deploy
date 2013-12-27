@@ -28,6 +28,8 @@ def help
   Options:
   	-h, --help          Prints this help document
   	-v, --version       Prints the deploy gem version
+  	-r, --reverse       Downloads files from server to directory
+  	-d, --download      Downloads files from server to directory
 
   See https://github.com/rosszurowski/deploy for additional documentation.
   )
@@ -72,37 +74,47 @@ def install
 	
 end
 
-# See if they're running a command
-if ARGV.size > 0
-	case ARGV[0]
-	when '-v', '--version', 'version'
-		puts "Deploy v" + Deploy::VERSION
-		exit
-	when '-h', '--help', 'help'
-		puts help
-		exit
-	when 'install', 'setup'
-		install
-		exit
-	when 'config'
-		unless ARGV[1].empty?
-			File.open(Deploy::GEM_SETTINGS_PATH, 'w+') do |file|
-				# Remove illegal characters and add to file
-				file.puts 'config_path: ' + ARGV[1].gsub(/[^\w\.]/, '_')
-			end
-			puts "Configuration file renamed to `#{ARGV[1].gsub(/[^\w\.]/, '_')}`"
-		else
-			puts "Please provide a name for configuration files. See `deploy help` for more details."
-		end
+def go(rev=false)
+	if File.exist?(Deploy::CONFIG_PATH)
+		deploy = Deploy::Deployment.new
+		deploy.reverse = rev
+		deploy.go ARGV
+	else
+		puts "No config file found, run `deploy install` to create one"
 		exit
 	end
 end
 
-
-if File.exist?(Deploy::CONFIG_PATH)
-	deploy = Deploy::Deployment.new
-	deploy.go ARGV
-else
-	puts "No config file found, run `deploy install` to create one"
+# See if they're running a command
+case ARGV[0]
+when '-v', '--version', 'version'
+	puts "Deploy v" + Deploy::VERSION
+	exit
+when '-h', '--help', 'help'
+	puts help
+	exit
+when 'install', 'setup'
+	install
+	exit
+when '-r', '--rev', '--reverse', 'rev', 'reverse', '-d', '--down', '--download', 'down', 'download'
+	
+	# Run the deploy in reverse
+	go(true)
+	exit
+	
+when 'config'
+	unless ARGV[1].empty?
+		File.open(Deploy::GEM_SETTINGS_PATH, 'w+') do |file|
+			# Remove illegal characters and add to file
+			file.puts 'config_path: ' + ARGV[1].gsub(/[^\w\.]/, '_')
+		end
+		puts "Configuration file renamed to `#{ARGV[1].gsub(/[^\w\.]/, '_')}`"
+	else
+		puts "Please provide a name for configuration files. See `deploy help` for more details."
+	end
 	exit
 end
+
+
+# Run the deploy straight if nothing else triggered
+go(false)

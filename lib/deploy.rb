@@ -14,6 +14,8 @@ module Deploy
   class Deployment
 
     attr_reader :environments
+    
+    attr_accessor :reverse
 
     def initialize()
 
@@ -23,6 +25,8 @@ module Deploy
       @config.each do |env|
         @environments.push Environment.new(env[0], env[1])
       end
+
+      @reverse = false
 
     end
 
@@ -51,7 +55,17 @@ module Deploy
         end
         
       end
+      
+    end
 
+    # Set deployment reverse and apply it to all associated environments too
+    def reverse=(reverse)
+      
+      @reverse = reverse
+      @environments.each do |env|
+        env.config[:reverse] = reverse
+      end
+      
     end
 
   end

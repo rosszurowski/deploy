@@ -60,7 +60,7 @@ module Deploy
 				tmp_exclude.puts Deploy::CONFIG_PATH 
 				tmp_exclude.close
 			end
-			
+
 			unless @config[:pass].empty?
 				tmp_pass = Tempfile.new(['pass','.txt'])
 				tmp_pass.puts @config[:pass]
@@ -80,16 +80,21 @@ module Deploy
 			if(@config[:pass].empty? and @config[:private_key].empty?)
 				rsync_cmd += " -i #{@config[:private_key]} " 																		# Include a custom private key if requested
 			end
-			
-			rsync_cmd += "-p#{@config[:port]}\""																								# Choose port if specified
 
-			rsync_cmd += " " + `pwd`.gsub(/\s+/, "") + "#{@config[:local]}"											# The local path from the current directory
-			
-			rsync_cmd += " "																																	# Adding a space here means we don't need an if/else statement
+			rsync_cmd += "-p#{@config[:port]}\" "																							# Choose port if specified
+
+			unless @config[:reverse]
+				rsync_cmd += `pwd`.gsub(/\s+/, "") + "#{@config[:local]} "												# The local path from the current directory
+			end
+
 			rsync_cmd += "#{@config[:user]}@" unless @config[:user].empty?											# Only add user if not empty
 			rsync_cmd += "#{@config[:host]}:"																									# Add host
 			rsync_cmd += "~#{@config[:remote]}"																								# Add remote (relative to remote user home)
-
+			
+			if @config[:reverse]
+				
+			end
+			
 			# Run the command
 			puts rsync_cmd
 			# system(rsync_cmd)
@@ -97,13 +102,13 @@ module Deploy
 			# Remove excludes/pass file if needed
 			tmp_exclude.unlink unless @config[:excludes].empty?
 			tmp_pass.unlink unless @config[:pass].empty?
-
+		
 		end
-
+		
 		private
-
+		
 		def validate
-
+		
 			# Fail without hostname (user/password are optional)
 			(puts "Error: no hostname set for `#{@name}`"; exit;) if @config[:host].empty?
 
@@ -113,6 +118,6 @@ module Deploy
 			(puts "Error: no remote path set for `#{@name}`"; exit;) if @config[:remote].empty?
 
 		end
-
+		
 	end
 end
