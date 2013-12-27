@@ -95,12 +95,38 @@ Below is a list of all available configuration options.
 
 The server that the files should be deployed to.
 
+### port
+
+- Type: `Number`
+- Default: `22`
+- Required: `Yes`
+
+The port that the connection should happen over
+
 ### user
 
 - Type: `String`
 - Default: `none`
 
-The username to login to the server. If no username is set, your computer account username will be used. Passwords will need to be typed in manually, however, SSH keys will be used if available.
+The username to login to the server. If no username is set, your computer account username will be used.
+
+### pass
+
+- Type: `String`
+- Default: `none`
+
+The password to login to the server. If SSH keys aren't available, then the `pass` option will be used. If neither SSH keys nor `pass` are set, a prompt will be given.
+
+### privateKey
+
+- Type: `String`
+- Default: `none`
+
+The path to an alternative SSH key. This only needs to be set if your key isn't one of the following:
+```
+~/.ssh/id_rsa
+~/.ssh/id_dsa
+```
 
 ### sync
 

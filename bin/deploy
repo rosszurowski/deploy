@@ -3,6 +3,12 @@
 require 'deploy'
 require 'fileutils'
 
+# TODO: Create `-r`, `--rev`, `--reverse`, `rev`, `reverse` command to download
+# from the server instead of upload
+# TODO: Allow pre/post-deploy tasks to be run on a per-environment basis for 
+# both local and remote servers. That could help some people, but not really
+# needed for a while yet.
+
 def help
 	%Q(
   Usage: deploy [COMMAND] [ENVIRONMENTS] [OPTIONS]
@@ -13,9 +19,10 @@ def help
   	version             Prints the siteleaf gem version
   	
   Environments:
-  	<env>			   Deploys listed environments
+  	<env>               Deploys listed environments
   	
-  	If no commands, environments, or options are given, the first environment in the config file will be deployed.
+  	If no commands, environments, or options are given,
+  	the first environment in the config file will be deployed.
 
   Options:
   	-h, --help          Prints this help document
@@ -48,7 +55,7 @@ def install
 			File.open(Deploy::CONFIG_PATH, 'w+') do |file|
 				file.puts 'server_name:','  host: ""','  user: ""','  pass: ""','  path:','    local: "/"','    remote: "/public_html/"'
 			end
-			puts "Configuration file created. Fill in `#{Deploy::CONFIG_PATH}` with server details before deploying."
+			puts "Configuration file `#{Deploy::CONFIG_PATH}` created."
 		else
 			puts "No congifuration file has been installed."
 		end
@@ -58,7 +65,7 @@ def install
 		File.open(Deploy::CONFIG_PATH, 'w+') do |file|
 			file.puts 'server_name:','  host: ""','  user: ""','  pass: ""','  path:','    local: "/"','    remote: "/public_html/"'
 		end
-		puts "Deployment configuration file created. Fill in `#{Deploy::CONFIG_PATH}` with server details before deploying."
+		puts "Configuration file `#{Deploy::CONFIG_PATH}` created."
 		
 	end
 	
@@ -78,6 +85,7 @@ if ARGV.size > 0
 		exit
 	end
 end
+
 
 if File.exist?(Deploy::CONFIG_PATH)
 	deploy = Deploy::Deployment.new
