@@ -245,7 +245,7 @@ Deploy is almost identical to [DPLOY](https://github.com/LeanMeanFightingMachine
 
 ## Uninstall
 
-To uninstall Deploy, download the [project files](https://github.com/rosszurowski/deploy/archive/master.zip), navigate to the unzipped directory, and run:
+To uninstall Deploy, just run:
 
 ```
 gem uninstall rsync-deploy
