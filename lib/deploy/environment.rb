@@ -12,14 +12,13 @@ module Deploy
 		def initialize(name, hash)
 
 			@name = name
-			@config = { :host => '', :port => '',  :user => '', :pass => '', :private_key => '', :local => '', :remote => '' }
+			@config = { :host => '', :port => '',  :user => '', :private_key => '', :local => '', :remote => '' }
 			@options = { :verbose => false, :sync => true }
 
 			@config[:host] = hash['host']
 			@config[:port] = hash['port'] || '22'
 			
 			@config[:user] = hash['user'] || ''
-			@config[:pass] = hash['pass'] || ''
 			@config[:private_key] = hash['privateKey'] || ''
 
 			@config[:local] = hash['path']['local'].gsub(/\s+/, "")
@@ -62,12 +61,6 @@ module Deploy
 				tmp_exclude.close
 			end
 
-			unless @config[:pass].empty?
-				tmp_pass = Tempfile.new(['pass','.txt'])
-				tmp_pass.puts @config[:pass]
-				tmp_pass.close
-			end
-
 			rsync_cmd = 'rsync -a'																																# Always keep permissions
 			rsync_cmd += 'v' if @options[:verbose]																									# Verbose if requested
 			rsync_cmd += 'z'																																			# Always zip files
@@ -78,13 +71,9 @@ module Deploy
 				rsync_cmd += ' --force --delete --delete-excluded'    																# Sync unless explicitly requested or downloading
 			end
 			rsync_cmd += " --exclude-from=#{tmp_exclude.path}" unless @config[:excludes].empty?			# Include exclude file if it exists
-			rsync_cmd += " --password-file=#{tmp_pass.path}" unless @config[:pass].empty?						# Include password file if it exists
-			rsync_cmd += " -e \"ssh "
 			
-			if(@config[:pass].empty? and @config[:private_key].empty?)
-				rsync_cmd += " -i #{@config[:private_key]} " 																				# Include a custom private key if requested
-			end
-
+			rsync_cmd += " -e \"ssh "																															# Pass custom ssh options
+			rsync_cmd += " -i #{@config[:private_key]} " unless @config[:private_key].empty?					# Include a custom private key if requested
 			rsync_cmd += "-p #{@config[:port]}\" "																									# Choose port if specified
 
 			unless @options[:reverse]
@@ -103,9 +92,8 @@ module Deploy
 			# puts rsync_cmd
 			system(rsync_cmd)
 
-			# Remove excludes/pass file if needed
+			# Remove excludes file if needed
 			tmp_exclude.unlink unless @config[:excludes].empty?
-			tmp_pass.unlink unless @config[:pass].empty?
 		
 		end
 		
@@ -113,7 +101,7 @@ module Deploy
 		
 		def validate
 		
-			# Fail without hostname (user/password are optional)
+			# Fail without hostname (username is optional)
 			(puts "Error: no hostname set for `#{@name}`"; exit;) if @config[:host].empty?
 
 			# Fail if local/remote paths not set (because they should be in initialize

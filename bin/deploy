@@ -59,7 +59,7 @@ def install
 		
 		if(answer == 'y')
 			File.open(Deploy::CONFIG_PATH, 'w+') do |file|
-				file.puts 'server_name:','  host: ""','  user: ""','  pass: ""','  path:','    local: "/"','    remote: "/public_html/"'
+				file.puts 'server_name:','  host: ""','  user: ""','  path:','    local: "/"','    remote: "/public_html/"'
 			end
 			puts "Configuration file `#{Deploy::CONFIG_PATH}` created."
 		else
@@ -69,7 +69,7 @@ def install
 	else
 		
 		File.open(Deploy::CONFIG_PATH, 'w+') do |file|
-			file.puts 'server_name:','  host: ""','  user: ""','  pass: ""','  path:','    local: "/"','    remote: "/public_html/"'
+			file.puts 'server_name:','  host: ""','  user: ""','  path:','    local: "/"','    remote: "/public_html/"'
 		end
 		puts "Configuration file `#{Deploy::CONFIG_PATH}` created."
 		

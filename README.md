@@ -132,13 +132,6 @@ The port that the connection should happen over
 
 The username to login to the server. If no username is set, your computer account username will be used.
 
-### pass
-
-- Type: `String`
-- Default: `none`
-
-The password to login to the server. If SSH keys aren't available, then the `pass` option will be used. If neither SSH keys nor `pass` are set, a prompt will be given.
-
 ### privateKey
 
 - Type: `String`
