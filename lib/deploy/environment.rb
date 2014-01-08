@@ -58,6 +58,7 @@ module Deploy
 				end
 				# Don't upload the deploy configuration file
 				tmp_exclude.puts Deploy::CONFIG_PATH 
+				tmp_exclude.puts ".git" # Never sync git files
 				tmp_exclude.close
 			end
 
@@ -84,7 +85,7 @@ module Deploy
 				rsync_cmd += " -i #{@config[:private_key]} " 																				# Include a custom private key if requested
 			end
 
-			rsync_cmd += "-p#{@config[:port]}\" "																									# Choose port if specified
+			rsync_cmd += "-p #{@config[:port]}\" "																									# Choose port if specified
 
 			unless @options[:reverse]
 				rsync_cmd += `pwd`.gsub(/\s+/, "") + "#{@config[:local]} "														# The local path from the current directory
